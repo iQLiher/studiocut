@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>StudioCut</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────────── */
+:root {
+  --text-xs:   clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;
+  --space-5:1.25rem;--space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;
+  --space-12:3rem;--space-16:4rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --transition: 180ms cubic-bezier(0.16,1,0.3,1);
+  --font-body: 'Satoshi', 'Inter', sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg:       #0f1117;
+  --surface:  #161820;
+  --surface2: #1c1f2e;
+  --border:   rgba(255,255,255,0.08);
+  --text:     #e2e4f0;
+  --muted:    #6b7280;
+  --faint:    #374151;
+  --accent:   #6366f1;
+  --accent-h: #4f52d8;
+  --accent-hl:#1e2040;
+  --success:  #22c55e;
+  --warn:     #f59e0b;
+  --error:    #ef4444;
+  --shadow-md: 0 4px 16px rgba(0,0,0,.4);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.5);
+}
+
+[data-theme="light"] {
+  --bg:       #f5f5f7;
+  --surface:  #ffffff;
+  --surface2: #f0f0f5;
+  --border:   rgba(0,0,0,0.1);
+  --text:     #111827;
+  --muted:    #6b7280;
+  --faint:    #d1d5db;
+  --accent:   #4f46e5;
+  --accent-h: #3730a3;
+  --accent-hl:#eef2ff;
+  --success:  #16a34a;
+  --warn:     #d97706;
+  --error:    #dc2626;
+  --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.12);
+}
+
+
+/* ── Reset ────────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
+  color:var(--text);background:var(--bg);transition:background 400ms ease,color 400ms ease;overflow-x:hidden}
+img,picture{display:block;max-width:100%;height:auto}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+a,button,[role="button"],input{transition:all var(--transition)}
+
+/* ── Layout ───────────────────────────────────────────────────────────────── */
+.app{display:grid;grid-template-rows:auto 1fr;min-height:100dvh}
+
+/* Header */
+.header-wrap{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  pointer-events:none;
+  padding-top:var(--space-3);
+}
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--space-3) var(--space-3);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-full);
+  box-shadow:var(--shadow-md);
+  pointer-events:all;
+  width:fit-content;
+  margin:0 auto;
+}
+.logo{display:flex;align-items:center;gap:var(--space-3)}
+.logo-icon{width:32px;height:32px;flex-shrink:0}
+.logo-text{font-size:var(--text-lg);font-weight:700;letter-spacing:-0.02em;padding:0 12px;margin-right:40px}
+.logo-sub{font-size:var(--text-xs);color:var(--muted);margin-left:var(--space-2)}
+.header-actions{display:flex;align-items:center;gap:var(--space-3)}
+
+/* Theme toggle */
+.theme-toggle{
+  width:36px;height:36px;border-radius:var(--radius-full);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);border:1px solid var(--border);background:var(--surface2);
+}
+.theme-toggle:hover{color:var(--text);background:var(--surface2)}
+
+/* Status pills */
+.status-bar{display:flex;gap:var(--space-3);align-items:center}
+.pill{
+  display:flex;align-items:center;gap:var(--space-2);
+  padding:var(--space-1) var(--space-3);
+  border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:500;
+  background:var(--surface2);border:1px solid var(--border);
+}
+.pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pill-dot.inbox{background:var(--warn)}
+.pill-dot.proc{background:var(--accent)}
+.pill-dot.done{background:var(--success)}
+
+/* Main grid */
+.main{display:grid;grid-template-columns:1fr 340px;gap:var(--space-6);
+  padding:var(--space-8);max-width:1280px;margin:80px auto 0;width:100%}
+
+/* ── Upload zone ─────────────────────────────────────────────────────────── */
+.upload-section{display:flex;flex-direction:column;gap:var(--space-6)}
+
+.drop-zone{
+  position:relative;
+  border:2px dashed var(--border);
+  border-radius:var(--radius-xl);
+  background:var(--surface);
+  min-height:280px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:var(--space-4);cursor:pointer;
+  transition:all var(--transition);
+  text-align:center;padding:var(--space-8);
+}
+.drop-zone:hover,.drop-zone.dragover{
+  border-color:var(--accent);
+  background:var(--accent-hl);
+  box-shadow:0 0 0 4px color-mix(in oklab,var(--accent) 15%,transparent);
+}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-icon{width:56px;height:56px;color:var(--accent);opacity:0.8}
+.drop-title{font-size:var(--text-lg);font-weight:700}
+.drop-sub{font-size:var(--text-sm);color:var(--muted);max-width:36ch}
+.drop-formats{
+  display:flex;gap:var(--space-2);flex-wrap:wrap;justify-content:center;margin-top:var(--space-2)
+}
+.fmt-tag{
+  font-size:var(--text-xs);padding:2px 8px;border-radius:var(--radius-full);
+  background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+}
+
+.btn-primary{
+  display:inline-flex;align-items:center;gap:var(--space-2);
+  padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);
+  background:var(--accent);color:#fff;font-size:var(--text-sm);font-weight:600;
+  box-shadow:0 2px 8px color-mix(in oklab,var(--accent) 40%,transparent);
+}
+.btn-primary:hover{background:var(--accent-h)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+
+/* Preview de archivos pendientes */
+.queue-list{display:flex;flex-direction:column;gap:var(--space-2)}
+.queue-item{
+  display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-3);background:var(--surface);
+  border-radius:16px;border:1px solid var(--border);
+}
+.queue-thumb{width:44px;height:44px;border-radius:var(--radius-sm);
+  object-fit:cover;background:var(--surface2);flex-shrink:0}
+.queue-name{font-size:var(--text-sm);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.queue-size{font-size:var(--text-xs);color:var(--muted)}
+.queue-remove{width:28px;height:28px;border-radius:var(--radius-sm);
+  color:var(--muted);display:flex;align-items:center;justify-content:center}
+.queue-remove:hover{color:var(--error);background:var(--surface2)}
+
+/* Toast */
+.toast-container{position:fixed;bottom:var(--space-6);right:var(--space-6);
+  display:flex;flex-direction:column;gap:var(--space-2);z-index:999}
+.toast{
+  padding:var(--space-3) var(--space-5);border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:500;
+  box-shadow:var(--shadow-lg);
+  animation:slideIn .25s ease forwards;
+  max-width:320px;
+}
+.toast.success{background:color-mix(in oklab,var(--success) 15%,var(--surface));
+  border:1px solid color-mix(in oklab,var(--success) 40%,transparent);color:var(--success)}
+.toast.error{background:color-mix(in oklab,var(--error) 15%,var(--surface));
+  border:1px solid color-mix(in oklab,var(--error) 40%,transparent);color:var(--error)}
+.toast.warn{background:color-mix(in oklab,var(--warn) 18%,var(--surface));border:1px solid color-mix(in oklab,var(--warn) 40%,transparent);color:var(--warn)}
+.toast.info{background:color-mix(in oklab,var(--accent) 15%,var(--surface));
+  border:1px solid color-mix(in oklab,var(--accent) 40%,transparent);color:var(--accent)}
+@keyframes slideIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes slideOut{from{opacity:1;transform:none}to{opacity:0;transform:translateX(24px)}}
+.toast.hiding{animation:slideOut .25s ease forwards}
+
+/* ── Panel lateral: resultados ───────────────────────────────────────────── */
+.sidebar{display:flex;flex-direction:column;gap:var(--space-4)}
+.panel{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);overflow:hidden;
+}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--border);
+}
+.panel-title{font-size:var(--text-sm);font-weight:700;display:flex;align-items:center;gap:var(--space-2)}
+.panel-count{
+  font-size:var(--text-xs);padding:2px 8px;border-radius:var(--radius-full);
+  background:var(--accent-hl);color:var(--accent);font-weight:600;
+}
+.panel-body{padding:var(--space-4)}
+
+/* Pipeline visual */
+.pipe-stats{display:flex;flex-direction:column;gap:var(--space-2)}
+.pipe-stat{display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) 0}
+.pipe-stat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pipe-stat-dot.c1{background:var(--warn)}
+.pipe-stat-dot.c2{background:var(--accent)}
+.pipe-stat-dot.c3{background:var(--success)}
+.pipe-stat-label{flex:1;font-size:var(--text-sm);color:var(--muted)}
+.pipe-stat-val{font-size:var(--text-sm);font-weight:700;color:var(--text);min-width:20px;text-align:right}
+.pipe-step{
+  display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-3);border-radius:var(--radius-md);
+  background:var(--surface2);
+}
+.pipe-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--text-xs);font-weight:700;
+}
+.pipe-num.c1{background:color-mix(in oklab,var(--warn) 20%,var(--surface));color:var(--warn)}
+.pipe-num.c2{background:color-mix(in oklab,var(--accent) 20%,var(--surface));color:var(--accent)}
+.pipe-num.c3{background:color-mix(in oklab,var(--success) 20%,var(--surface));color:var(--success)}
+.pipe-info{flex:1}
+.pipe-label{font-size:var(--text-xs);font-weight:600}
+.pipe-count{font-size:var(--text-xs);color:var(--muted)}
+.pipe-arrow{color:var(--faint);font-size:var(--text-xs);margin:0 var(--space-1)}
+
+/* Grid de resultados */
+.results-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-3);
+}
+.result-card{
+  background:var(--surface2);border-radius:var(--radius-md);overflow:hidden;
+  border:1px solid var(--border);position:relative;
+  transition:background var(--transition);
+}
+.result-card:hover{background:var(--surface-dynamic, color-mix(in oklab,var(--surface2) 60%,var(--surface)))}
+.result-thumb-wrap{
+  width:100%;aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;
+  background:#ffffff;overflow:hidden;
+  padding:var(--space-3);
+}
+.result-thumb{
+  max-width:100%;max-height:100%;
+  object-fit:contain;display:block;
+}
+.result-footer{
+  padding:var(--space-2);display:flex;align-items:center;justify-content:space-between;
+  gap:var(--space-1);
+}
+.result-name{font-size:var(--text-xs);color:var(--muted);overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;flex:1}
+.result-actions{display:flex;gap:var(--space-1)}
+.icon-btn{
+  width:28px;height:28px;border-radius:var(--radius-sm);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:12px;
+}
+.icon-btn:hover{color:var(--text);background:var(--border)}
+.icon-btn.danger:hover{color:var(--error)}
+
+/* Processing badge */
+.proc-badge{
+  position:absolute;top:6px;right:6px;
+  padding:2px 7px;border-radius:var(--radius-full);
+  font-size:10px;font-weight:600;
+  background:color-mix(in oklab,var(--accent) 20%,var(--surface));
+  color:var(--accent);border:1px solid color-mix(in oklab,var(--accent) 40%,transparent);
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.proc-badge{animation:pulse 1.5s ease-in-out infinite}
+
+/* Empty state */
+.empty{text-align:center;padding:var(--space-8) var(--space-4);color:var(--muted)}
+.empty-icon{font-size:36px;margin-bottom:var(--space-3);opacity:.4}
+.empty-msg{font-size:var(--text-sm)}
+
+/* Spinner */
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:18px;height:18px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+
+/* Responsive */
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .upload-section{order:-1}
+  .header-wrap{padding-top:var(--space-2)}
+  .header{padding:var(--space-2) var(--space-2)}
+  .logo-sub{display:none}
+}
+@media(max-width:480px){
+  .status-bar{display:none}
+  .main{padding:var(--space-4)}
+}
+
+/* ── Language selector ───────────────────────────────────────────────────── */
+.lang-select{
+  appearance:none;-webkit-appearance:none;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:var(--font-body);
+  font-size:var(--text-xs);
+  font-weight:500;
+  height:36px;
+  padding:0 40px 0 var(--space-3);
+  line-height:36px;
+  border-radius:var(--radius-md);
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  transition:all var(--transition);
+}
+.lang-select:hover{border-color:var(--accent);color:var(--text)}
+.lang-select:focus{outline:2px solid var(--accent);outline-offset:2px}
+
+
+
+
+.theme-toggle-float{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  left:50%;
+  margin-left:260px;
+  z-index:101;
+  pointer-events:all;
+}
+
+/* ── IP popup ────────────────────────────────────────────────────────────── */
+.ip-popup{
+  position:absolute;top:calc(100% + 8px);right:0;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4);
+  box-shadow:var(--shadow-lg);white-space:nowrap;
+  font-size:var(--text-sm);font-weight:600;color:var(--text);
+  z-index:300;display:none;
+}
+.ip-popup.open{display:flex;flex-direction:column;gap:4px}
+.ip-popup-row{display:flex;align-items:center;gap:var(--space-2)}
+.ip-popup-url{color:var(--accent);font-size:var(--text-xs);flex:1}
+.ip-copy-btn{
+  width:26px;height:26px;border-radius:var(--radius-sm);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);border:1px solid var(--border);background:var(--surface2);
+  transition:all var(--transition);
+}
+.ip-copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.header-actions{position:relative}
+@media(max-width:600px){
+  .ip-popup{
+    position:fixed;top:auto;bottom:var(--space-6);
+    right:var(--space-4);left:var(--space-4);
+    white-space:normal;
+  }
+}
+
+
+/* ── Mobile menu ──────────────────────────────────────────────────────────── */
+.mobile-menu-btn{display:none}
+.mobile-dropdown{
+  display:none;position:absolute;top:calc(100% + 8px);right:var(--space-4);
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:var(--space-2);
+  box-shadow:var(--shadow-lg);z-index:200;min-width:190px;
+}
+.mobile-dropdown.open{display:flex;flex-direction:column;gap:var(--space-1)}
+.mobile-menu-item{
+  display:flex;align-items:center;gap:var(--space-3);
+  padding:var(--space-3) var(--space-4);
+  border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:500;color:var(--text);
+  cursor:pointer;border:none;background:none;width:100%;text-align:left;
+  transition:background var(--transition);
+}
+.mobile-menu-item:hover{background:var(--surface2)}
+.mobile-menu-item svg{flex-shrink:0;color:var(--muted)}
+@media(max-width:600px){
+  .mobile-menu-btn{display:flex;align-items:center;justify-content:center;
+    width:36px;height:36px;border-radius:var(--radius-full);
+    border:1px solid var(--border);background:var(--surface2);color:var(--muted);}
+  #themeBtn,#ipBtn,#settingsBtn{display:none}
+}
+
+/* ── Settings Modal ─────────────────────────────────────────────────────── */
+.settings-panel{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-xl);
+  width:min(420px,90vw);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  transform:scale(0.95);
+  transition:transform 200ms ease;
+}
+.lightbox.open .settings-panel{transform:scale(1)}
+.settings-header{
+  padding:var(--space-5) var(--space-6) var(--space-4);
+  border-bottom:1px solid var(--border);
+}
+.settings-title{font-size:var(--text-lg);font-weight:700}
+.settings-body{padding:var(--space-5) var(--space-6);display:flex;flex-direction:column;gap:var(--space-5)}
+.setting-group{display:flex;flex-direction:column;gap:var(--space-2)}
+.setting-label{font-size:var(--text-sm);font-weight:600;color:var(--text)}
+.format-options{display:flex;gap:var(--space-2)}
+.fmt-btn{
+  flex:1;padding:var(--space-2) var(--space-3);
+  border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:500;
+  border:1px solid var(--border);background:var(--surface2);color:var(--muted);
+  transition:all var(--transition);
+}
+.fmt-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fmt-btn:hover:not(.active){color:var(--text);border-color:var(--accent)}
+.quality-slider{
+  width:100%;accent-color:var(--accent);height:4px;cursor:pointer;
+}
+.slider-labels{display:flex;justify-content:space-between;font-size:var(--text-xs);color:var(--muted)}
+/* Toggle switch */
+.toggle-switch{display:flex;align-items:center;cursor:pointer;width:fit-content}
+.toggle-switch input{position:absolute;opacity:0;width:0;height:0}
+.toggle-track{
+  width:44px;height:24px;border-radius:var(--radius-full);
+  background:var(--border);position:relative;
+  transition:background var(--transition);
+}
+.toggle-switch input:checked + .toggle-track{background:var(--accent)}
+.toggle-thumb{
+  position:absolute;top:3px;left:3px;
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform var(--transition);box-shadow:var(--shadow-sm);
+}
+.toggle-switch input:checked + .toggle-track .toggle-thumb{transform:translateX(20px)}
+.settings-footer{
+  padding:var(--space-4) var(--space-6);
+  border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:var(--space-3);
+}
+.btn-settings-cancel{
+  padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:500;
+  border:1px solid var(--border);background:var(--surface2);color:var(--text);
+  transition:all var(--transition);
+}
+.btn-settings-cancel:hover{border-color:var(--accent);color:var(--accent)}
+.btn-settings-apply{
+  padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);
+  font-size:var(--text-sm);font-weight:500;
+  background:var(--accent);color:#fff;border:none;
+  transition:all var(--transition);
+}
+.btn-settings-apply:hover{background:var(--accent-dark,var(--accent));opacity:0.9}
+#qualityGroup{transition:opacity var(--transition)}
+#qualityGroup.hidden{opacity:0.35;pointer-events:none}
+
+/* ── Lightbox ────────────────────────────────────────────────────────────── */
+.lightbox{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;
+  transition:opacity 200ms ease;
+}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox img{
+  max-width:min(90vw,900px);
+  max-height:85dvh;
+  object-fit:contain;
+  border-radius:var(--radius-xl);
+  box-shadow:0 24px 64px rgba(0,0,0,.6);
+  transform:scale(0.95);
+  transition:transform 200ms ease;
+}
+.lightbox.open img{transform:scale(1)}
+.lightbox-close{
+  position:absolute;top:var(--space-5);right:var(--space-5);
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(255,255,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:20px;line-height:1;
+  backdrop-filter:blur(4px);
+  transition:background var(--transition);
+}
+.lightbox-close:hover{background:rgba(255,255,255,0.3)}
+/* ── Queue send animation ─────────────────────────────────────────────────── */
+@keyframes queueItemOut{
+  0%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(-28px)}
+}
+.queue-item.sending{
+  animation:queueItemOut 0.42s cubic-bezier(0.4,0,0.6,1) forwards;
+  pointer-events:none;
+}
+.queue-btns-sending{
+  transition:opacity 0.3s ease;
+  opacity:0;
+  pointer-events:none;
+}
+</style>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header-wrap">
+  <header class="header">
+    <div class="logo">
+      <span class="logo-text" role="button" tabindex="0" style="cursor:pointer" onclick="window.scrollTo({top:0,behavior:'smooth'})" onkeydown="if(event.key==='Enter'||event.key===' ')window.scrollTo({top:0,behavior:'smooth'})">StudioCut</span>
+    </div>
+    <div class="header-actions">
+
+      <select class="lang-select" id="langSelect" aria-label="Language">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+        <option value="pl">Polski</option>
+      </select>
+      <button class="theme-toggle" data-theme-toggle aria-label="Cambiar tema" id="themeBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="theme-toggle" id="ipBtn" aria-label="Ver IP local">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </button>
+      <div class="ip-popup" id="ipPopup">
+        <div id="ipText">…</div>
+        <div class="ip-popup-row">
+          <div class="ip-popup-url" id="ipUrl"></div>
+          <button class="ip-copy-btn" id="ipCopyBtn" aria-label="Copiar enlace" title="Copiar enlace">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <button class="theme-toggle" id="settingsBtn" aria-label="Ajustes">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menú">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="mobile-dropdown" id="mobileDropdown">
+      <button class="mobile-menu-item" id="mobileThemeBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span data-key="toggleTheme">Modo oscuro</span>
+      </button>
+      <button class="mobile-menu-item" id="mobileIpBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        <span data-key="showIP">Ver IP local</span>
+      </button>
+      <button class="mobile-menu-item" id="mobileSettingsBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        <span data-key="settingsTitle">Ajustes</span>
+      </button>
+    </div>
+  </header>
+  </div>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Upload -->
+    <section class="upload-section">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p class="drop-title">Arrastra tus imágenes aquí</p>
+        <p class="drop-sub">O haz clic para seleccionar. Se eliminará el fondo automáticamente con rembg.</p>
+        <div class="drop-formats">
+          <span class="fmt-tag">PNG</span><span class="fmt-tag">JPG</span>
+          <span class="fmt-tag">WEBP</span><span class="fmt-tag">BMP</span><span class="fmt-tag">TIFF</span>
+        </div>
+      </div>
+
+      <!-- Cola de pendientes -->
+      <div id="queueSection" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3)">
+          <span style="font-size:var(--text-sm);font-weight:600"><span data-key="queueLabel">Listas para subir</span> (<span id="qCount">0</span>)</span>
+          <div style="display:flex;gap:var(--space-2)" id="queueBtns">
+            <button class="btn-primary" id="btnUpload">
+              <span id="uploadSpinner" style="display:none" class="spinner"></span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+              <span data-key="btnSend">Enviar al servidor</span>
+            </button>
+            <button onclick="clearQueue()" style="font-size:var(--text-xs);color:var(--muted);padding:var(--space-2) var(--space-3);
+              border:1px solid var(--border);border-radius:var(--radius-md);padding:var(--space-2) var(--space-5);background:var(--surface2)"><span data-key="btnClear">Limpiar</span></button>
+          </div>
+        </div>
+        <div class="queue-list" id="queueList"></div>
+      </div>
+    </section>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- Pipeline -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span data-key="pipeTitle">Pipeline</span>
+          </span>
+        </div>
+        <div class="panel-body">
+          <div class="pipe-stats">
+            <div class="pipe-stat">
+              <span class="pipe-stat-dot c1"></span>
+              <span class="pipe-stat-label" data-key="pipeInbox">En cola</span>
+              <span class="pipe-stat-val" id="pInbox">0</span>
+            </div>
+            <div class="pipe-stat">
+              <span class="pipe-stat-dot c2"></span>
+              <span class="pipe-stat-label" data-key="pipeProc">Procesando</span>
+              <span class="pipe-stat-val" id="pProc">0</span>
+            </div>
+            <div class="pipe-stat">
+              <span class="pipe-stat-dot c3"></span>
+              <span class="pipe-stat-label" data-key="pipeOut">Listos</span>
+              <span class="pipe-stat-val" id="pDone">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resultados -->
+      <div class="panel" style="flex:1">
+        <div class="panel-header">
+          <span class="panel-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+            </svg>
+            <span data-key="resultsTitle">Resultados</span>
+          </span>
+          <span class="panel-count" id="outCount">0</span>
+        </div>
+        <div class="panel-body">
+          <div class="results-grid" id="resultsGrid">
+            <div class="empty" style="grid-column:1/-1">
+              <div class="empty-icon">🖼️</div>
+              <p class="empty-msg" data-key="emptyMsg">Los resultados aparecerán aquí</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<!-- Settings Modal -->
+<div class="lightbox" id="settingsModal" role="dialog" aria-modal="true" aria-label="Ajustes">
+  <div class="settings-panel" id="settingsPanel">
+    <div class="settings-header">
+      <h2 class="settings-title" data-key="settingsTitle">Ajustes</h2>
+    </div>
+    <div class="settings-body">
+
+      <div class="setting-group">
+        <label class="setting-label" data-key="settingsFmt">Formato de salida</label>
+        <div class="format-options" id="formatOptions">
+          <button class="fmt-btn active" data-fmt="JPEG">JPEG</button>
+          <button class="fmt-btn" data-fmt="PNG">PNG</button>
+          <button class="fmt-btn" data-fmt="WEBP">WEBP</button>
+        </div>
+      </div>
+
+      <div class="setting-group" id="qualityGroup">
+        <label class="setting-label"><span data-key="settingsQuality">Calidad</span> <span id="qualityVal">85</span>%</label>
+        <input type="range" class="quality-slider" id="qualitySlider" min="10" max="100" value="85">
+        <div class="slider-labels"><span>10%</span><span>100%</span></div>
+      </div>
+
+      <div class="setting-group" id="autostartGroup">
+        <label class="setting-label" data-key="settingsAutostart">Iniciar con el sistema</label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="autostartToggle">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+        </label>
+      </div>
+
+    </div>
+    <div class="settings-footer">
+      <button class="btn-settings-cancel" id="settingsCancel" data-key="settingsCancel">Cancelar</button>
+      <button class="btn-settings-apply" id="settingsApply" data-key="settingsApply">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Preview">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────
+let queue = [];      // archivos pendientes de subir
+let lastOutput = null; // null = primer poll, no notificar
+
+// ── Theme toggle ─────────────────────────────────────────────────────────
+(function(){
+  const btn = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  const SUN = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+  const MOON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+  // Detectar preferencia del sistema operativo
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  let d = mq.matches ? 'dark' : 'light';
+  root.setAttribute('data-theme', d);
+  btn.innerHTML = d === 'dark' ? MOON : SUN;
+
+  // Seguir cambios del sistema en tiempo real
+  mq.addEventListener('change', e => {
+    d = e.matches ? 'dark' : 'light';
+    root.setAttribute('data-theme', d);
+    btn.innerHTML = d === 'dark' ? MOON : SUN;
+  });
+
+  // Toggle manual
+  btn.addEventListener('click', () => {
+    d = d === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', d);
+    btn.innerHTML = d === 'dark' ? MOON : SUN;
+  });
+})();
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function toast(msg, type='info', duration=3500) {
+  const c = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('hiding');
+    setTimeout(() => el.remove(), 260);
+  }, duration);
+}
+
+// ── Drop zone ─────────────────────────────────────────────────────────────
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  addFiles([...e.dataTransfer.files]);
+});
+fileInput.addEventListener('change', () => { addFiles([...fileInput.files]); fileInput.value = ''; });
+
+function addFiles(files) {
+  const allowed = ['image/png','image/jpeg','image/webp','image/bmp','image/tiff'];
+  files.forEach(f => {
+    if (!allowed.includes(f.type)) { toast(t.errFormat(f.name), 'error'); return; }
+    if (queue.find(q => q.file.name === f.name && q.file.size === f.size)) return;
+    queue.push({ file: f, id: Math.random().toString(36).slice(2) });
+  });
+  renderQueue();
+}
+
+function renderQueue() {
+  const sec = document.getElementById('queueSection');
+  const list = document.getElementById('queueList');
+  const cnt = document.getElementById('qCount');
+  if (!queue.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  cnt.textContent = queue.length;
+  list.innerHTML = '';
+  queue.forEach(item => {
+    const url = URL.createObjectURL(item.file);
+    const size = (item.file.size / 1024).toFixed(0) + ' KB';
+    const div = document.createElement('div');
+    div.className = 'queue-item';
+    div.innerHTML = `
+      <img src="${url}" class="queue-thumb" alt="" loading="lazy" width="44" height="44">
+      <span class="queue-name">${item.file.name}</span>
+      <span class="queue-size">${size}</span>
+      <button class="queue-remove" onclick="removeFromQueue('${item.id}')" aria-label="${t.deleteBtn}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>`;
+    list.appendChild(div);
+  });
+}
+
+function removeFromQueue(id) {
+  queue = queue.filter(q => q.id !== id);
+  renderQueue();
+}
+
+function clearQueue() {
+  queue = [];
+  renderQueue();
+}
+
+// ── Upload ────────────────────────────────────────────────────────────────
+document.getElementById('btnUpload').addEventListener('click', uploadFiles);
+
+async function uploadFiles() {
+  if (!queue.length) return;
+  const btn     = document.getElementById('btnUpload');
+  const spinner = document.getElementById('uploadSpinner');
+  const btns    = document.getElementById('queueBtns');
+  const items   = [...document.querySelectorAll('.queue-item')];
+
+  // 1. Fade out buttons
+  if (btns) btns.classList.add('queue-btns-sending');
+
+  // 2. Stagger cards upward
+  const delay = 80;
+  items.forEach((item, i) => {
+    setTimeout(() => item.classList.add('sending'), i * delay);
+  });
+
+  // 3. Wait for last card to finish
+  const animDuration = items.length * delay + 440;
+  await new Promise(r => setTimeout(r, animDuration));
+
+  btn.disabled = true;
+  spinner.style.display = 'block';
+
+  const fd = new FormData();
+  queue.forEach(item => fd.append('images', item.file));
+
+  try {
+    const res = await fetch('/upload', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || t.errServer);
+    toast(t.toastSent(data.count), 'success');
+    queue = [];
+    renderQueue();
+  } catch(e) {
+    toast(`${t.errServer}: ${e.message}`, 'error');
+    // Restore on error
+    if (btns) btns.classList.remove('queue-btns-sending');
+    items.forEach(item => item.classList.remove('sending'));
+  } finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+  }
+}
+
+// ── Polling de estado ─────────────────────────────────────────────────────
+async function pollStatus() {
+  try {
+    const res = await fetch('/status');
+    const data = await res.json();
+    const { counts, inbox, processing, output } = data;
+
+    document.getElementById('pInbox').textContent = counts.inbox;
+    document.getElementById('pProc').textContent = counts.processing;
+    document.getElementById('pDone').textContent = counts.output;
+    document.getElementById('outCount').textContent = counts.output;
+
+    // Notificar nuevos outputs (no notificar en el primer poll)
+    if (lastOutput !== null) {
+      const newOnes = output.filter(n => !lastOutput.includes(n));
+      newOnes.forEach(n => toast(t.toastReady(n), 'success'));
+    }
+    lastOutput = output;
+
+    renderResults(output, processing);
+  } catch(e) {
+    // servidor no disponible: silencioso
+  }
+}
+
+function cardHTML(name, isProc) {
+  if (isProc) return `
+    <div class="result-card" data-name="${name}" data-proc="1">
+      <div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--surface2)">
+        
+      </div>
+      <div class="proc-badge">${t.procBadge}</div>
+      <div class="result-footer"><span class="result-name">${name}</span></div>
+    </div>`;
+  const url = `/output/${encodeURIComponent(name)}`;
+  return `
+    <div class="result-card" data-name="${name}">
+      <div class="result-thumb-wrap" style="cursor:zoom-in" onclick="openLightbox('${url}','${name}')">
+        <img src="${url}" class="result-thumb" alt="${name}" loading="lazy" width="160" height="160">
+      </div>
+      <div class="result-footer">
+        <span class="result-name">${name}</span>
+        <div class="result-actions">
+          <a href="${url}" download="${name}" class="icon-btn" title="${t.download}" aria-label="${t.download}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </a>
+          <button class="icon-btn danger" onclick="deleteResult('${name}')" title="${t.deleteBtn}" aria-label="${t.deleteBtn}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+              <path d="M10 11v6M14 11v6"/>
+              <path d="M9 6V4h6v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderResults(output, processing) {
+  const grid = document.getElementById('resultsGrid');
+
+  // Estado vacío
+  if (!output.length && !processing.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-icon">🖼️</div>
+      <p class="empty-msg">${t.emptyMsg}</p>
+    </div>`;
+    return;
+  }
+
+  // Lista completa ordenada: processing primero, luego output
+  const allNames = [
+    ...processing.map(n => ({ name: n, proc: true })),
+    ...output.map(n => ({ name: n, proc: false }))
+  ];
+
+  // Eliminar tarjetas que ya no existen
+  [...grid.querySelectorAll('.result-card')].forEach(card => {
+    const name = card.getAttribute('data-name');
+    if (!allNames.find(x => x.name === name)) card.remove();
+  });
+
+  // Eliminar empty state si existe
+  const empty = grid.querySelector('.empty');
+  if (empty) empty.remove();
+
+  // Insertar o actualizar tarjetas en orden
+  allNames.forEach((item, idx) => {
+    const existing = grid.querySelector(`.result-card[data-name="${CSS.escape(item.name)}"]`);
+    if (!existing) {
+      // Nueva tarjeta: insertar en la posición correcta
+      const tmp = document.createElement('div');
+      tmp.innerHTML = cardHTML(item.name, item.proc).trim();
+      const newCard = tmp.firstChild;
+      const cards = [...grid.querySelectorAll('.result-card')];
+      if (idx < cards.length) {
+        grid.insertBefore(newCard, cards[idx]);
+      } else {
+        grid.appendChild(newCard);
+      }
+    }
+    // Si ya existe, no tocamos nada → la imagen no se recarga
+  });
+}
+
+async function deleteResult(name) {
+  try {
+    const res = await fetch(`/delete/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error();
+    toast(t.toastDeleted(name), 'info');
+    pollStatus();
+  } catch { toast(t.errDelete, 'error'); }
+}
+
+// Arrancar polling cada 2 s
+pollStatus();
+setInterval(pollStatus, 2000);
+
+
+
+
+
+
+
+
+// ── Mobile menu ────────────────────────────────────────────────────────────
+(function(){
+  const menuBtn   = document.getElementById('mobileMenuBtn');
+  const dropdown  = document.getElementById('mobileDropdown');
+  if (!menuBtn) return;
+  menuBtn.addEventListener('click', e => { e.stopPropagation(); dropdown.classList.toggle('open'); });
+  document.addEventListener('click', () => dropdown.classList.remove('open'));
+  document.getElementById('mobileThemeBtn').addEventListener('click', () => {
+    const tb = document.querySelector('[data-theme-toggle]');
+    if (tb) tb.click();
+    dropdown.classList.remove('open');
+  });
+  document.getElementById('mobileIpBtn').addEventListener('click', () => {
+    document.getElementById('ipBtn').click();
+    dropdown.classList.remove('open');
+  });
+  document.getElementById('mobileSettingsBtn').addEventListener('click', () => {
+    openSettings();
+    dropdown.classList.remove('open');
+  });
+})();
+
+// ── IP Button ──────────────────────────────────────────────────────────────
+const ipBtn   = document.getElementById('ipBtn');
+const ipPopup = document.getElementById('ipPopup');
+const ipText  = document.getElementById('ipText');
+const ipUrl   = document.getElementById('ipUrl');
+let ipLoaded  = false;
+
+ipBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  if (!ipLoaded) {
+    fetch('/local-ip').then(r=>r.json()).then(d => {
+      ipText.textContent = d.ip;
+      ipUrl.textContent  = d.url;
+      ipLoaded = true;
+      ipPopup.classList.add('open');
+    }).catch(()=>{ ipText.textContent = '127.0.0.1'; ipUrl.textContent = 'http://localhost:5000'; ipLoaded=true; ipPopup.classList.add('open'); });
+  } else {
+    ipPopup.classList.toggle('open');
+  }
+});
+document.addEventListener('click', () => ipPopup.classList.remove('open'));
+
+document.getElementById('ipCopyBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const url = document.getElementById('ipUrl').textContent;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('ipCopyBtn');
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+    btn.style.color = 'var(--success)';
+    setTimeout(() => {
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+      btn.style.color = '';
+    }, 1500);
+  });
+});
+
+// ── Settings Modal ────────────────────────────────────────────────────────
+const settingsModal  = document.getElementById('settingsModal');
+const settingsBtn    = document.getElementById('settingsBtn');
+const settingsCancel = document.getElementById('settingsCancel');
+const settingsApply  = document.getElementById('settingsApply');
+const qualitySlider  = document.getElementById('qualitySlider');
+const qualityVal     = document.getElementById('qualityVal');
+const qualityGroup   = document.getElementById('qualityGroup');
+const autostartGroup = document.getElementById('autostartGroup');
+const autostartToggle= document.getElementById('autostartToggle');
+let pendingSettings  = {};
+
+function openSettings() {
+  fetch('/settings').then(r=>r.json()).then(s => {
+    pendingSettings = {...s};
+    applyLang(currentLang);
+    // force re-apply after fetch resolves
+    setTimeout(()=>applyLang(currentLang),0);
+    document.querySelectorAll('.fmt-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.fmt === s.format);
+    });
+    qualitySlider.value = s.quality;
+    qualityVal.textContent = s.quality;
+    qualityGroup.classList.toggle('hidden', s.format === 'PNG');
+    autostartToggle.checked = !!s.autostart;
+    autostartGroup.style.display = ['Windows','Darwin'].includes(s.platform) ? '' : 'none';
+    settingsModal.classList.add('open');
+    const sb=window.innerWidth-document.documentElement.clientWidth;document.body.style.overflow='hidden';document.body.style.paddingRight=sb+'px';
+  });
+}
+
+function closeSettings() {
+  settingsModal.classList.remove('open');
+  document.body.style.overflow='';document.body.style.paddingRight='';
+}
+
+settingsBtn.addEventListener('click', openSettings);
+settingsCancel.addEventListener('click', closeSettings);
+settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeSettings(); });
+
+document.querySelectorAll('.fmt-btn').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.fmt-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    pendingSettings.format = b.dataset.fmt;
+    qualityGroup.classList.toggle('hidden', b.dataset.fmt === 'PNG');
+  });
+});
+
+qualitySlider.addEventListener('input', () => {
+  qualityVal.textContent = qualitySlider.value;
+  pendingSettings.quality = parseInt(qualitySlider.value);
+});
+
+autostartToggle.addEventListener('change', () => {
+  pendingSettings.autostart = autostartToggle.checked;
+});
+
+settingsApply.addEventListener('click', () => {
+  const procCount = parseInt(document.getElementById('pProc').textContent || '0');
+  if (procCount > 0) {
+    toast(t.settingsBusy, 'warn');
+    return;
+  }
+  fetch('/settings', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(pendingSettings)
+  }).then(r=>r.json()).then(d => {
+    if (d.ok) { toast(t.settingsSaved, 'success'); closeSettings(); }
+    else toast(`${t.settingsError}: ${d.error||''}`, 'error');
+  }).catch(() => toast(t.connectionError, 'error'));
+});
+
+// ── Lightbox ──────────────────────────────────────────────────────────────
+const lightbox     = document.getElementById('lightbox');
+const lightboxImg  = document.getElementById('lightboxImg');
+const lightboxClose = document.getElementById('lightboxClose');
+
+function openLightbox(url, alt) {
+  lightboxImg.src = url;
+  lightboxImg.alt = alt;
+  lightbox.classList.add('open');
+  const sbL=window.innerWidth-document.documentElement.clientWidth;document.body.style.overflow='hidden';document.body.style.paddingRight=sbL+'px';
+}
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  document.body.style.overflow='';document.body.style.paddingRight='';
+  setTimeout(() => { lightboxImg.src = ''; }, 210);
+}
+
+lightboxClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ── i18n ──────────────────────────────────────────────────────────────────
+const LANGS = {
+  es: {
+    dropTitle:    'Arrastra tus imágenes aquí',
+    dropSub:      'O haz clic para seleccionar. Se eliminará el fondo automáticamente con rembg.',
+    queueLabel:   'Listas para subir',
+    btnSend:      'Enviar al servidor',
+    btnClear:     'Limpiar',
+    pipeTitle:    'Pipeline',
+    pipeInbox:    'Inbox',
+    pipeProc:     'Procesando',
+    pipeOut:      'Output',
+    resultsTitle: 'Resultados',
+    pillInbox:    'en cola',
+    pillProc:     'procesando',
+    pillDone:     'listos',
+    pipe1Empty:   'Esperando imágenes…',
+    pipe2Empty:   'rembg eliminando fondo…',
+    pipe3Empty:   'PNGs sin fondo listos',
+    pipe1count:   n => `${n} imagen(es) esperando`,
+    pipe2count:   n => `${n} procesando…`,
+    pipe3count:   n => `${n} PNG(s) listos`,
+    emptyMsg:     'Los resultados aparecerán aquí',
+    toastSent:    n => `${n} imagen(es) enviadas al servidor`,
+    toastReady:   n => `Listo: ${n}`,
+    toastDeleted: n => `Eliminado: ${n}`,
+    errFormat:    n => `Formato no soportado: ${n}`,
+    errServer:    'Error de servidor',
+    errDelete:    'Error al eliminar',
+    deleteBtn:      'Eliminar',
+    download:      'Descargar',
+    procBadge:      'Procesando…',
+    settingsSaved:  'Ajustes guardados',
+    toggleTheme:    'Modo oscuro',
+    showIP:         'Ver IP local',
+    settingsError:  'Error al guardar',
+    connectionError:'Error de conexión',
+    settingsTitle:  'Ajustes',
+    settingsFmt:    'Formato de salida',
+    settingsQuality:'Calidad',
+    settingsAutostart:'Iniciar con el sistema',
+    settingsCancel: 'Cancelar',
+    settingsApply:  'Aplicar',
+    settingsBusy:   'No se pueden aplicar cambios mientras se procesan imágenes',
+    settingsSaved:    'Ajustes guardados',
+    settingsError:    'Error al guardar',
+    connectionError:    'Error de conexión',
+  },
+  en: {
+    dropTitle:    'Drag your images here',
+    dropSub:      'Or click to select. Background will be removed automatically with rembg.',
+    queueLabel:   'Ready to upload',
+    btnSend:      'Send to server',
+    btnClear:     'Clear',
+    pipeTitle:    'Pipeline',
+    pipeInbox:    'Inbox',
+    pipeProc:     'Processing',
+    pipeOut:      'Output',
+    resultsTitle: 'Results',
+    pillInbox:    'queued',
+    pillProc:     'processing',
+    pillDone:     'ready',
+    pipe1Empty:   'Waiting for images…',
+    pipe2Empty:   'rembg removing background…',
+    pipe3Empty:   'Background-free PNGs ready',
+    pipe1count:   n => `${n} image(s) waiting`,
+    pipe2count:   n => `${n} processing…`,
+    pipe3count:   n => `${n} PNG(s) ready`,
+    emptyMsg:     'Results will appear here',
+    toastSent:    n => `${n} image(s) sent to server`,
+    toastReady:   n => `Ready: ${n}`,
+    toastDeleted: n => `Deleted: ${n}`,
+    errFormat:    n => `Unsupported format: ${n}`,
+    errServer:    'Server error',
+    errDelete:    'Delete error',
+    deleteBtn:      'Delete',
+    download:      'Download',
+    procBadge:      'Processing…',
+    settingsSaved:  'Settings saved',
+    toggleTheme:    'Dark mode',
+    showIP:         'Show local IP',
+    settingsError:  'Error saving settings',
+    connectionError:'Connection error',
+    settingsTitle:  'Settings',
+    settingsFmt:    'Output format',
+    settingsQuality:'Quality',
+    settingsAutostart:'Start with system',
+    settingsCancel: 'Cancel',
+    settingsApply:  'Apply',
+    settingsBusy:   'Cannot apply changes while images are being processed',
+    settingsSaved:    'Settings saved',
+    settingsError:    'Error saving settings',
+    connectionError:    'Connection error',
+  },
+  pl: {
+    dropTitle:    'Przeciągnij obrazy tutaj',
+    dropSub:      'Lub kliknij, aby wybrać. Tło zostanie usunięte automatycznie przez rembg.',
+    queueLabel:   'Gotowe do przesłania',
+    btnSend:      'Wyślij na serwer',
+    btnClear:     'Wyczyść',
+    pipeTitle:    'Pipeline',
+    pipeInbox:    'Skrzynka',
+    pipeProc:     'Przetwarzanie',
+    pipeOut:      'Wynik',
+    resultsTitle: 'Wyniki',
+    pillInbox:    'w kolejce',
+    pillProc:     'przetwarzanie',
+    pillDone:     'gotowe',
+    pipe1Empty:   'Oczekiwanie na obrazy…',
+    pipe2Empty:   'rembg usuwa tło…',
+    pipe3Empty:   'Pliki PNG bez tła gotowe',
+    pipe1count:   n => `${n} obraz(y) czeka`,
+    pipe2count:   n => `${n} w przetwarzaniu…`,
+    pipe3count:   n => `${n} plik(ów) PNG gotowych`,
+    emptyMsg:     'Wyniki pojawią się tutaj',
+    toastSent:    n => `Wysłano ${n} obraz(y) na serwer`,
+    toastReady:   n => `Gotowe: ${n}`,
+    toastDeleted: n => `Usunięto: ${n}`,
+    errFormat:    n => `Nieobsługiwany format: ${n}`,
+    errServer:    'Błąd serwera',
+    errDelete:    'Błąd usuwania',
+    deleteBtn:      'Usuń',
+    download:      'Pobierz',
+    procBadge:      'Przetwarzanie…',
+    settingsTitle:  'Ustawienia',
+    settingsFmt:    'Format wyjściowy',
+    settingsQuality:'Jakość',
+    settingsAutostart:'Uruchom z systemem',
+    settingsCancel: 'Anuluj',
+    settingsApply:  'Zastosuj',
+    settingsBusy:   'Nie można zastosować zmian podczas przetwarzania obrazów',
+    settingsSaved:  'Ustawienia zapisane',
+    toggleTheme:    'Tryb ciemny',
+    showIP:         'Pokaz lokalny IP',
+    settingsError:  'Błąd zapisu ustawień',
+    connectionError:'Błąd połączenia',
+  }
+};
+
+let currentLang = 'es';
+let t = LANGS[currentLang];
+
+function applyLang(lang) {
+  currentLang = lang;
+  t = LANGS[lang] || LANGS.es;
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.getAttribute('data-key');
+    if (t[key] && typeof t[key] === 'string') el.textContent = t[key];
+  });
+
+  const dropTitle = document.querySelector('.drop-title');
+  const dropSub   = document.querySelector('.drop-sub');
+  if (dropTitle) dropTitle.textContent = t.dropTitle;
+  if (dropSub)   dropSub.textContent   = t.dropSub;
+
+  document.querySelectorAll('.pill-lbl').forEach(el => {
+    const key = el.getAttribute('data-key');
+    if (t[key]) el.textContent = t[key];
+  });
+
+  const settingsModalOpen = document.getElementById('settingsModal')?.classList.contains('open');
+  if (settingsModalOpen) {
+    document.querySelectorAll('[data-key]').forEach(el => {
+      const key = el.getAttribute('data-key');
+      if (t[key] && typeof t[key] === 'string') el.textContent = t[key];
+    });
+  }
+}
+
+document.getElementById('langSelect').addEventListener('change', e => {
+  applyLang(e.target.value);
+});
+
+</script>
+</body>
+</html>
