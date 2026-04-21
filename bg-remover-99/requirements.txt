@@ -1,0 +1,7 @@
+flask
+flask-cors
+pillow
+rembg
+psutil
+GPUtil
+pyinstaller

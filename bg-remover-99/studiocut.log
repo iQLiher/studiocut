@@ -1,0 +1,27 @@
+[15:01:08] [INFO] Worker thread iniciado.
+[15:01:08] [INFO] Sistema: Darwin | Python: 3.13.3
+[15:01:08] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[15:01:08] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[15:01:08] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[15:01:08] [INFO] Cargando modelo rembg (birefnet-general)...
+[15:01:14] [INFO] Modelo cargado correctamente.
+[15:05:02] [INFO] 7 archivo(s) en Inbox
+[15:05:02] [INFO] Procesando: ATQZ-66.jpg
+[15:05:32] [OK] ATQZ-66_nobg.jpeg | RAW: ATQZ-66-RAW.jpg
+[15:05:32] [INFO] Procesando: ECOJ-98.jpg
+[10:13:02] [INFO] Worker thread iniciado.
+[10:13:02] [INFO] Sistema: Darwin | Python: 3.13.3
+[10:13:02] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[10:13:02] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[10:13:02] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[10:13:02] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:13:10] [INFO] Modelo cargado correctamente.
+[10:13:10] [INFO] 5 archivo(s) en Inbox
+[10:13:10] [INFO] Procesando: KBXF-32.jpg
+[10:14:46] [INFO] Worker thread iniciado.
+[10:14:46] [INFO] Sistema: Darwin | Python: 3.13.3
+[10:14:46] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[10:14:46] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[10:14:46] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[10:14:46] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:14:52] [INFO] Modelo cargado correctamente.
