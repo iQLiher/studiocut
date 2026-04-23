@@ -1,0 +1,95 @@
+[15:01:08] [INFO] Worker thread iniciado.
+[15:01:08] [INFO] Sistema: Darwin | Python: 3.13.3
+[15:01:08] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[15:01:08] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[15:01:08] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[15:01:08] [INFO] Cargando modelo rembg (birefnet-general)...
+[15:01:14] [INFO] Modelo cargado correctamente.
+[15:05:02] [INFO] 7 archivo(s) en Inbox
+[15:05:02] [INFO] Procesando: ATQZ-66.jpg
+[15:05:32] [OK] ATQZ-66_nobg.jpeg | RAW: ATQZ-66-RAW.jpg
+[15:05:32] [INFO] Procesando: ECOJ-98.jpg
+[10:13:02] [INFO] Worker thread iniciado.
+[10:13:02] [INFO] Sistema: Darwin | Python: 3.13.3
+[10:13:02] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[10:13:02] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[10:13:02] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[10:13:02] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:13:10] [INFO] Modelo cargado correctamente.
+[10:13:10] [INFO] 5 archivo(s) en Inbox
+[10:13:10] [INFO] Procesando: KBXF-32.jpg
+[10:14:46] [INFO] Worker thread iniciado.
+[10:14:46] [INFO] Sistema: Darwin | Python: 3.13.3
+[10:14:46] [INFO] INBOX: /Users/liher/Downloads/bg-remover/1_inbox | existe: True
+[10:14:46] [INFO] PROCESSING: /Users/liher/Downloads/bg-remover/2_processing | existe: True
+[10:14:46] [INFO] OUTPUT: /Users/liher/Downloads/bg-remover/3_output | existe: True
+[10:14:46] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:14:52] [INFO] Modelo cargado correctamente.
+[13:47:35] [INFO] Worker thread iniciado.
+[13:47:35] [INFO] Sistema: Windows | Python: 3.14.4
+[13:47:35] [INFO] INBOX: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\1_inbox | existe: True
+[13:47:35] [INFO] PROCESSING: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\2_processing | existe: True
+[13:47:35] [INFO] OUTPUT: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\3_output | existe: True
+[13:47:35] [INFO] Cargando modelo rembg (birefnet-general)...
+[13:56:15] [INFO] Worker thread iniciado.
+[13:56:15] [INFO] Sistema: Windows | Python: 3.13.13
+[13:56:15] [INFO] INBOX: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\1_inbox | existe: True
+[13:56:15] [INFO] PROCESSING: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\2_processing | existe: True
+[13:56:15] [INFO] OUTPUT: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\3_output | existe: True
+[13:56:15] [INFO] Cargando modelo rembg (birefnet-general)...
+[14:10:30] [INFO] Worker thread iniciado.
+[14:10:30] [INFO] Sistema: Windows | Python: 3.11.9
+[14:10:30] [INFO] INBOX: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\1_inbox | existe: True
+[14:10:30] [INFO] PROCESSING: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\2_processing | existe: True
+[14:10:30] [INFO] OUTPUT: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\3_output | existe: True
+[14:10:30] [INFO] Cargando modelo rembg (birefnet-general)...
+[15:10:05] [INFO] Worker thread iniciado.
+[15:10:05] [INFO] Sistema: Windows | Python: 3.14.4
+[15:10:05] [INFO] INBOX: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\1_inbox | existe: True
+[15:10:05] [INFO] PROCESSING: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\2_processing | existe: True
+[15:10:05] [INFO] OUTPUT: C:\Users\Admin\Desktop\StudioCut Pack\bg-remover\3_output | existe: True
+[15:10:05] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:58:31] [INFO] Worker thread iniciado.
+[10:58:31] [INFO] Sistema: Windows | Python: 3.11.9
+[10:58:31] [INFO] INBOX: C:\Users\Admin\Desktop\bg-remover\1_inbox | existe: True
+[10:58:31] [INFO] PROCESSING: C:\Users\Admin\Desktop\bg-remover\2_processing | existe: True
+[10:58:31] [INFO] OUTPUT: C:\Users\Admin\Desktop\bg-remover\3_output | existe: True
+[10:58:31] [INFO] Cargando modelo rembg (birefnet-general)...
+[10:58:44] [INFO] Modelo cargado correctamente.
+[10:59:58] [INFO] 7 archivo(s) en Inbox
+[10:59:58] [INFO] Procesando: BBWD-08.jpg
+[11:00:21] [OK] BBWD-08_nobg.jpeg | RAW: BBWD-08-RAW.jpg
+[11:00:21] [INFO] Procesando: DWFX-97.jpg
+[11:00:50] [OK] DWFX-97_nobg.jpeg | RAW: DWFX-97-RAW.jpg
+[11:00:50] [INFO] Procesando: OYWT-98.jpg
+[11:01:09] [OK] OYWT-98_nobg.jpeg | RAW: OYWT-98-RAW.jpg
+[11:01:09] [INFO] Procesando: QMTB-00.jpg
+[11:01:27] [OK] QMTB-00_nobg.jpeg | RAW: QMTB-00-RAW.jpg
+[11:01:27] [INFO] Procesando: XDYC-67.jpg
+[11:01:46] [OK] XDYC-67_nobg.jpeg | RAW: XDYC-67-RAW.jpg
+[11:01:46] [INFO] Procesando: XVQR-60.jpg
+[11:02:04] [OK] XVQR-60_nobg.jpeg | RAW: XVQR-60-RAW.jpg
+[11:02:04] [INFO] Procesando: ZZSF-49.jpg
+[11:02:42] [OK] ZZSF-49_nobg.jpeg | RAW: ZZSF-49-RAW.jpg
+[11:10:43] [INFO] Worker thread iniciado.
+[11:10:43] [INFO] Sistema: Windows | Python: 3.11.9
+[11:10:43] [INFO] INBOX: C:\Users\Admin\Desktop\bg-remover\1_inbox | existe: True
+[11:10:43] [INFO] PROCESSING: C:\Users\Admin\Desktop\bg-remover\2_processing | existe: True
+[11:10:43] [INFO] OUTPUT: C:\Users\Admin\Desktop\bg-remover\3_output | existe: True
+[11:10:43] [INFO] Cargando modelo rembg (birefnet-general)...
+[11:11:02] [INFO] Modelo cargado correctamente.
+[11:11:04] [INFO] 7 archivo(s) en Inbox
+[11:11:04] [INFO] Procesando: AKGM-11.jpg
+[11:11:21] [OK] AKGM-11_nobg.jpeg | RAW: AKGM-11-RAW.jpg
+[11:11:21] [INFO] Procesando: CDFG-80.jpg
+[11:11:47] [OK] CDFG-80_nobg.jpeg | RAW: CDFG-80-RAW.jpg
+[11:11:47] [INFO] Procesando: FFLY-67.jpg
+[11:12:04] [OK] FFLY-67_nobg.jpeg | RAW: FFLY-67-RAW.jpg
+[11:12:04] [INFO] Procesando: FYMV-30.jpg
+[11:12:21] [OK] FYMV-30_nobg.jpeg | RAW: FYMV-30-RAW.jpg
+[11:12:21] [INFO] Procesando: VJZN-51.jpg
+[11:12:37] [OK] VJZN-51_nobg.jpeg | RAW: VJZN-51-RAW.jpg
+[11:12:37] [INFO] Procesando: XAKW-54.jpg
+[11:12:54] [OK] XAKW-54_nobg.jpeg | RAW: XAKW-54-RAW.jpg
+[11:12:54] [INFO] Procesando: YPDR-91.jpg
+[11:13:12] [OK] YPDR-91_nobg.jpeg | RAW: YPDR-91-RAW.jpg
